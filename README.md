@@ -63,8 +63,8 @@ split trivially safe, since each provider is exactly one row and cannot appear o
 
 **2. Nothing is judged against a threshold of 0.50.**
 0.50 is an artifact of how classifiers are usually written up, not a business decision.
-The operating point comes from expected cost (Stage 6), and the queue comes from ranking
-(Stage 7).
+The operating point comes from expected cost (Stage 7), and the queue comes from ranking
+(Stage 8).
 
 **3. Every model is measured against rule baselines.**
 `Rule_ClaimVolume`, `Rule_TotalReimbursed` and `Rule_MeanReimbursed` run through identical
@@ -120,7 +120,12 @@ provider size rather than provider behaviour, and the script says so.
 - Calibration check on out-of-fold probabilities (`outputs/calibration_oof.csv`).
 - Test set is touched exactly once; every metric comes with a bootstrap 95% CI.
 
-### 6. `size_confound.py` — check whether the model adds signal beyond provider size`nCompares size-inclusive and size-free models, measures ranking quality within provider-size strata,`n and checks whether expected-exposure ranking adds information beyond total billed. Writes`n`outputs/size_confound.json` and `outputs/size_strata.csv`.`n`n### 7. `threshold_cost.py` — cost-aware operating point
+### 6. `size_confound.py` — check whether the model adds signal beyond provider size
+Compares size-inclusive and size-free models, measures ranking quality within provider-size strata,
+ and checks whether expected-exposure ranking adds information beyond total billed. Writes
+`outputs/size_confound.json` and `outputs/size_strata.csv`.
+
+### 7. `threshold_cost.py` — cost-aware operating point
 ```
 cost = (TP + FP) x investigation_cost
      + sum over missed frauds of exposure_amount x recovery_fraction
@@ -142,7 +147,11 @@ Compares two strategies at realistic capacities (1%, 5%, 10%, 20% of providers):
 Random ordering is included as a floor. Writes `outputs/investigation_queue.csv` with
 priority, risk band, and expected exposure per provider.
 
-### 9. `queue_significance.py` — compare the queue with sorting by total billed`nUses paired bootstrap resampling and Holm-Bonferroni correction to test whether model rankings`nbeat the no-model billing rule. Writes `outputs/queue_significance.csv` and `outputs/queue_significance.json`.`n`n### 10. `explain.py` — reasons a human can check
+### 9. `queue_significance.py` — compare the queue with sorting by total billed
+Uses paired bootstrap resampling and Holm-Bonferroni correction to test whether model rankings
+beat the no-model billing rule. Writes `outputs/queue_significance.csv` and `outputs/queue_significance.json`.
+
+### 10. `explain.py` — reasons a human can check
 SHAP when available, with automatic fallback to coefficients or impurity importances.
 Feature names are translated into plain English (`top_physician_concentration` becomes
 "share of claims signed by a single physician"). Language rule enforced throughout: a
@@ -160,8 +169,10 @@ feature **contributes to a risk score**; it does not cause or prove fraud.
 | `selection.json` | chosen model, 1-SE reasoning, whether it beats the rules |
 | `calibration_oof.csv` | predicted vs observed fraud rate by probability bin |
 | `final_test_results.csv`, `test_bootstrap_ci.json` | the single test evaluation |
-| `size_confound.json`, `size_strata.csv` | size-confound diagnostics |`n| `threshold_cost_curve.csv`, `threshold_cost_sensitivity.csv` | cost by threshold, and by assumption |
-| `topk_ranking.csv`, `investigation_queue.csv` | precision@K, recall@K, the ranked queue |`n| `queue_significance.csv`, `queue_significance.json` | paired significance test against the billing rule |
+| `size_confound.json`, `size_strata.csv` | size-confound diagnostics |
+| `threshold_cost_curve.csv`, `threshold_cost_sensitivity.csv` | cost by threshold, and by assumption |
+| `topk_ranking.csv`, `investigation_queue.csv` | precision@K, recall@K, the ranked queue |
+| `queue_significance.csv`, `queue_significance.json` | paired significance test against the billing rule |
 | `global_importance.csv`, `explanations.json` | global drivers and per-provider reasons |
 
 ---
