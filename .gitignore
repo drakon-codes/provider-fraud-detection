@@ -1,0 +1,18 @@
+# Input claims, derived provider records, model artifacts, and evaluation outputs
+# are kept local. They may contain provider-level records and exposure amounts.
+data/raw/**
+data/processed/**
+outputs/**
+models/**
+dashboard/data/*.json
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!outputs/.gitkeep
+!models/.gitkeep
+!dashboard/data/.gitkeep
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env

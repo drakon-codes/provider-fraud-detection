@@ -1,0 +1,7 @@
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.3
+joblib>=1.3
+xgboost>=2.0      # optional - skipped automatically if absent
+shap>=0.44        # optional - explain.py falls back to model coefficients
+scipy>=1.10
