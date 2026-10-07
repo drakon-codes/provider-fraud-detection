@@ -112,7 +112,7 @@ Runs each feature group alone and each with one group removed. The key compariso
 provider size rather than provider behaviour, and the script says so.
 
 ### 5. `train.py` — selection and one test evaluation
-- No resampling anywhere. SMOTE inflates probabilities, and Stages 6 and 7 multiply
+- No resampling anywhere. SMOTE inflates probabilities, and Stages 7 and 8 multiply
   probabilities by money.
 - Repeated stratified CV reporting mean **and** standard deviation.
 - Selection by the one-standard-error rule: the simplest model within 1 SE of the best,
@@ -120,7 +120,7 @@ provider size rather than provider behaviour, and the script says so.
 - Calibration check on out-of-fold probabilities (`outputs/calibration_oof.csv`).
 - Test set is touched exactly once; every metric comes with a bootstrap 95% CI.
 
-### 6. `threshold_cost.py` — cost-aware operating point
+### 6. `size_confound.py` — check whether the model adds signal beyond provider size`nCompares size-inclusive and size-free models, measures ranking quality within provider-size strata,`n and checks whether expected-exposure ranking adds information beyond total billed. Writes`n`outputs/size_confound.json` and `outputs/size_strata.csv`.`n`n### 7. `threshold_cost.py` — cost-aware operating point
 ```
 cost = (TP + FP) x investigation_cost
      + sum over missed frauds of exposure_amount x recovery_fraction
@@ -133,7 +133,7 @@ The sensitivity table is the real output. The optimal threshold moves substantia
 recovery assumption, and you do not have real insurer figures. **Report the range, not a
 single number.**
 
-### 7. `rank_topk.py` — the investigation queue
+### 8. `rank_topk.py` — the investigation queue
 Compares two strategies at realistic capacities (1%, 5%, 10%, 20% of providers):
 
 - **probability**: rank by P(fraud) — catches more providers
@@ -142,7 +142,7 @@ Compares two strategies at realistic capacities (1%, 5%, 10%, 20% of providers):
 Random ordering is included as a floor. Writes `outputs/investigation_queue.csv` with
 priority, risk band, and expected exposure per provider.
 
-### 8. `explain.py` — reasons a human can check
+### 9. `queue_significance.py` — compare the queue with sorting by total billed`nUses paired bootstrap resampling and Holm-Bonferroni correction to test whether model rankings`nbeat the no-model billing rule. Writes `outputs/queue_significance.csv` and `outputs/queue_significance.json`.`n`n### 10. `explain.py` — reasons a human can check
 SHAP when available, with automatic fallback to coefficients or impurity importances.
 Feature names are translated into plain English (`top_physician_concentration` becomes
 "share of claims signed by a single physician"). Language rule enforced throughout: a
@@ -160,8 +160,8 @@ feature **contributes to a risk score**; it does not cause or prove fraud.
 | `selection.json` | chosen model, 1-SE reasoning, whether it beats the rules |
 | `calibration_oof.csv` | predicted vs observed fraud rate by probability bin |
 | `final_test_results.csv`, `test_bootstrap_ci.json` | the single test evaluation |
-| `threshold_cost_curve.csv`, `threshold_cost_sensitivity.csv` | cost by threshold, and by assumption |
-| `topk_ranking.csv`, `investigation_queue.csv` | precision@K, recall@K, the ranked queue |
+| `size_confound.json`, `size_strata.csv` | size-confound diagnostics |`n| `threshold_cost_curve.csv`, `threshold_cost_sensitivity.csv` | cost by threshold, and by assumption |
+| `topk_ranking.csv`, `investigation_queue.csv` | precision@K, recall@K, the ranked queue |`n| `queue_significance.csv`, `queue_significance.json` | paired significance test against the billing rule |
 | `global_importance.csv`, `explanations.json` | global drivers and per-provider reasons |
 
 ---
